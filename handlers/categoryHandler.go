@@ -20,14 +20,14 @@ func CreateCategory(c *gin.Context) {
 
     if err != nil {
         c.JSON(http.StatusBadRequest, gin.H{
-            "error": "JSON tidak valid",
+            "error": "Invalid JSON",
         })
         return
     }
 
     if category.Name == "" {
         c.JSON(http.StatusBadRequest, gin.H{
-            "error": "Nama category tidak boleh kosong",
+            "error": "Category Name is Required",
         })
         return
     }
@@ -36,7 +36,7 @@ func CreateCategory(c *gin.Context) {
 
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{
-            "error": "Database error",
+            "error": "Database Error",
         })
         return
     }
@@ -51,7 +51,7 @@ func GetCategories (c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
@@ -68,7 +68,7 @@ func GetCategoryByID (c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"ID Tidak Valid",
+			"error":"Invalid ID",
 		})
 		return
 	}
@@ -78,13 +78,13 @@ func GetCategoryByID (c *gin.Context){
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound){
 			c.JSON(http.StatusNotFound, gin.H{
-				"error": "Category tidak ditemukan",
+				"error": "Category Not Found",
 			})
 			return
 		}
 
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
@@ -103,7 +103,7 @@ func UpdateCategory (c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"ID Tidak Valid",
+			"error":"Invalid ID",
 		})
 		return
 	}
@@ -113,13 +113,13 @@ func UpdateCategory (c *gin.Context){
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound){
 			c.JSON(http.StatusNotFound, gin.H{
-				"error": "Category tidak ditemukan",
+				"error": "Category Not Found",
 			})
 			return
 		}
 
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
@@ -128,7 +128,7 @@ func UpdateCategory (c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"JSON tidak valid",
+			"error":"Invalid JSON",
 		})
 		return
 	}
@@ -139,7 +139,7 @@ func UpdateCategory (c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
@@ -158,7 +158,7 @@ func DeleteCategory (c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"ID tidak valid",
+			"error":"Invalid ID",
 		})
 		return
 	}
@@ -168,13 +168,13 @@ err = config.DB.First(&category, idInt).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound){
 			c.JSON(http.StatusNotFound, gin.H{
-				"error": "Category tidak ditemukan",
+				"error": "Category Not Found",
 			})
 			return
 		}
 
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
@@ -183,13 +183,13 @@ err = config.DB.First(&category, idInt).Error
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":"Category berhasil dihapus",
+		"message":"Category Deleted Successfully",
 		})
 
 

@@ -21,28 +21,28 @@ func CreateProduct(c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"JSON Tidak Valid",
+			"error":"Invalid JSON",
 		})
 		return
 	}
 
 	if req.Name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"Name tidak boleh kosong",
+			"error":"Name is Required",
 		})
 		return
 	}
 
 	if req.Price < 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"Price tidak boleh kurang dari 0",
+			"error":"Price Cannot be Less Than 0",
 		})
 		return
 	}
 
 	if req.Stock < 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"Stock tidak boleh kurang dari 0",
+			"error":"Stock Cannot be Less Than 0",
 		})
 		return
 	}
@@ -52,12 +52,12 @@ func CreateProduct(c *gin.Context){
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound){
 			c.JSON(http.StatusNotFound, gin.H{
-				"error":"Category tidak ditemukan",
+				"error":"Category Not Found",
 			})
 			return
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
@@ -73,7 +73,7 @@ func CreateProduct(c *gin.Context){
 
 	if err != nil{
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
@@ -100,7 +100,7 @@ func GetProducts(c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"Page tidak valid",
+			"error":"Invalid Page",
 		})
 		return
 	}
@@ -109,28 +109,28 @@ func GetProducts(c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"Limit tidak valid",
+			"error":"Invalid Limit",
 		})
 		return
 	}
 
 	if page < 1{
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"Page tidak boleh kurang dari 1",
+			"error":"Page Cannot be Less Than 1",
 		})
 		return
 	}
 
 	if limit < 1{
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"Limit tidak boleh kurang dari 1",
+			"error":"Limit Cannot be Less Than 1",
 		})
 		return
 	}
 
 	if limit > 100 {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"Limit tidak boleh lebih dari 100",
+			"error":"Limit Cannot Exceed 100",
 		})
 		return
 	}
@@ -139,7 +139,7 @@ func GetProducts(c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
@@ -188,7 +188,7 @@ func GetProducts(c *gin.Context){
 
 	func GetProductByID(c *gin.Context){
 		var product models.Product
-		
+
 
 		id := c.Param("id")
 
@@ -197,7 +197,7 @@ func GetProducts(c *gin.Context){
 		
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error":"ID Tidak valid",
+				"error":"Invalid ID",
 			})
 			return
 		}
@@ -207,13 +207,13 @@ func GetProducts(c *gin.Context){
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound){
 				c.JSON(http.StatusNotFound, gin.H{
-					"error":"Product tidak ditemukan",
+					"error":"Product Not Found",
 				})
 				return
 			}
 
 			c.JSON(http.StatusInternalServerError, gin.H{
-				"error":"Database error",
+				"error":"Database Error",
 			})
 			return
 		}
@@ -246,7 +246,7 @@ func UpdateProduct(c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"ID Tidak Valid",
+			"error":"Invalid ID",
 		})
 		return
 	}
@@ -256,12 +256,12 @@ func UpdateProduct(c *gin.Context){
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound){
 			c.JSON(http.StatusNotFound, gin.H{
-				"error":"Product tidak ditemukan",
+				"error":"Product Not Found",
 			})
 			return
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
@@ -270,28 +270,28 @@ func UpdateProduct(c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"JSON tidak valid",
+			"error":"Invalid JSON",
 		})
 		return
 	}
 
 	if req.Name == ""{
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"Name tidak boleh kosong",
+			"error":"Name is Required",
 		})
 		return
 	}
 
 	if req.Price < 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"Price tidak boleh kurang dari 0",
+			"error":"Price Cannot be Less Than 0",
 		})
 		return
 	}
 
 	if req.Stock < 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"Stock tidak boleh kurang dari 0",
+			"error":"Stock Cannot be Less Than 0",
 		})
 		return
 	}
@@ -301,13 +301,13 @@ func UpdateProduct(c *gin.Context){
 	if err != nil {
     if errors.Is(err, gorm.ErrRecordNotFound) {
         c.JSON(http.StatusNotFound, gin.H{
-            "error": "Category tidak ditemukan",
+            "error": "Category Not Found",
         })
         return
     }
 
     	c.JSON(http.StatusInternalServerError, gin.H{
-        	"error": "Database error",
+        	"error": "Database Error",
     	})
     	return
 	}
@@ -321,7 +321,7 @@ func UpdateProduct(c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
@@ -339,7 +339,7 @@ func DeleteProduct(c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"ID Tidak Valid",
+			"error":"Invalid ID",
 		})
 		return
 	}
@@ -349,12 +349,12 @@ func DeleteProduct(c *gin.Context){
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound){
 			c.JSON(http.StatusNotFound, gin.H{
-				"error":"Product tidak ditemukan",
+				"error":"Product Not Found",
 			})
 			return
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
@@ -363,12 +363,12 @@ func DeleteProduct(c *gin.Context){
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"Database error",
+			"error":"Database Error",
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":"Product berhasil di hapus",
+		"message":"Product Deleted Successfully",
 	})
 }
