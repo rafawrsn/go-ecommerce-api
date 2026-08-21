@@ -3,20 +3,21 @@ package handlers
 import (
 	"errors"
 	"go-ecommerce-api/config"
+	"go-ecommerce-api/dto"
 	"go-ecommerce-api/models"
+	"math"
 	"net/http"
 	"strconv"
-	"math"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 func CreateProduct(c *gin.Context){
-	var product models.Product
+	var req dto.CreateProductRequest
 	var category models.Category
 
-	err := c.BindJSON(&product)
+	err := c.BindJSON(&req)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -25,32 +26,32 @@ func CreateProduct(c *gin.Context){
 		return
 	}
 
-	if product.Name == "" {
+	if req.Name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":"Name tidak boleh kosong",
 		})
 		return
 	}
 
-	if product.Price < 0 {
+	if req.Price < 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":"Price tidak boleh kurang dari 0",
 		})
 		return
 	}
 
-	if product.Stock < 0 {
+	if req.Stock < 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":"Stock tidak boleh kurang dari 0",
 		})
 		return
 	}
 
-	err = config.DB.First(&category, product.CategoryID).Error
+	err = config.DB.First(&category, req.CategoryID).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound){
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"error":"Category tidak ditemukan",
 			})
 			return
@@ -59,6 +60,13 @@ func CreateProduct(c *gin.Context){
 			"error":"Database error",
 		})
 		return
+	}
+
+	product := models.Product{
+		Name: req.Name,
+		Price: req.Price,
+		Stock: req.Stock,
+		CategoryID: req.CategoryID,
 	}
 
 	err = config.DB.Create(&product).Error
@@ -70,7 +78,15 @@ func CreateProduct(c *gin.Context){
 		return
 	}
 
-	c.JSON(http.StatusCreated, product)
+	response := dto.ProductResponse{
+		ID:         product.ID,
+    	Name:       product.Name,
+    	Price:      product.Price,
+    	Stock:      product.Stock,
+    	CategoryID: product.CategoryID,
+	}
+
+	c.JSON(http.StatusCreated, response)
 }
 
 func GetProducts(c *gin.Context){
@@ -141,8 +157,26 @@ func GetProducts(c *gin.Context){
 		return
 	}
 
+	responses := make([]dto.ProductResponse, 0, len(products))
+
+	for _, product := range products {
+    response := dto.ProductResponse{
+        ID:         product.ID,
+        Name:       product.Name,
+        Price:      product.Price,
+        Stock:      product.Stock,
+        CategoryID: product.CategoryID,
+        Category: dto.CategoryResponse{
+            ID:   product.Category.ID,
+            Name: product.Category.Name,
+        },
+    }
+
+    responses = append(responses, response)
+}
+
 	c.JSON(http.StatusOK, gin.H{
-		"data": products,
+		"data": responses,
 		"page": page,
 		"limit": limit,
 		"total": total,
@@ -154,6 +188,7 @@ func GetProducts(c *gin.Context){
 
 	func GetProductByID(c *gin.Context){
 		var product models.Product
+		
 
 		id := c.Param("id")
 
@@ -183,13 +218,27 @@ func GetProducts(c *gin.Context){
 			return
 		}
 
-		c.JSON(http.StatusOK, product)
+		response := dto.ProductResponse{
+		ID:         product.ID,
+        Name:       product.Name,
+        Price:      product.Price,
+        Stock:      product.Stock,
+        CategoryID: product.CategoryID,
+        Category: dto.CategoryResponse{
+            ID:   product.Category.ID,
+            Name: product.Category.Name,
+        },
+		}
+
+		c.JSON(http.StatusOK, response)
 
 	}
 
 func UpdateProduct(c *gin.Context){
+
 	var product models.Product
 	var category models.Category
+	var req dto.UpdateProductRequest
 
 	id := c.Param("id")
 
@@ -217,7 +266,7 @@ func UpdateProduct(c *gin.Context){
 		return
 	}
 
-	err = c.BindJSON(&product)
+	err = c.BindJSON(&req)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -226,28 +275,28 @@ func UpdateProduct(c *gin.Context){
 		return
 	}
 
-	if product.Name == ""{
+	if req.Name == ""{
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":"Name tidak boleh kosong",
 		})
 		return
 	}
 
-	if product.Price < 0 {
+	if req.Price < 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":"Price tidak boleh kurang dari 0",
 		})
 		return
 	}
 
-	if product.Stock < 0 {
+	if req.Stock < 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":"Stock tidak boleh kurang dari 0",
 		})
 		return
 	}
 
-	err = config.DB.First(&category, product.CategoryID).Error
+	err = config.DB.First(&category, req.CategoryID).Error
 
 	if err != nil {
     if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -262,6 +311,11 @@ func UpdateProduct(c *gin.Context){
     	})
     	return
 	}
+
+	product.Name = req.Name
+	product.Price = req.Price
+	product.Stock = req.Stock
+	product.CategoryID = req.CategoryID
 
 	err = config.DB.Save(&product).Error
 
